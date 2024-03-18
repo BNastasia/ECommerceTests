@@ -7,7 +7,9 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.BeforeSuite;
 import utils.LoggerUtils;
 
-abstract class BaseTest {
+import static utils.TestData.BASE_URL;
+
+public abstract class BaseTest {
     private final Playwright playwright = Playwright.create();
     private final Browser browser = playwright.chromium().launch(new BrowserType.LaunchOptions()
             .setHeadless(false).setSlowMo(1000));
@@ -19,14 +21,14 @@ abstract class BaseTest {
         if(playwright != null) {
             LoggerUtils.logInfo("Playwright created");
         } else {
-            LoggerUtils.logFatal("Fatal: Playwright is not created");
+            LoggerUtils.logFatal("FATAL: Playwright is not created");
             System.exit(1);
         }
 
         if(browser.isConnected()) {
             LoggerUtils.logInfo("Browser " + browser.browserType().name() + " is connected");
         } else {
-            LoggerUtils.logFatal("Fatal: browser is not created");
+            LoggerUtils.logFatal("FATAL: browser is not created");
             System.exit(1);
         }
     }
@@ -38,6 +40,15 @@ abstract class BaseTest {
 
         page = context.newPage();
         LoggerUtils.logInfo("Page created");
+        LoggerUtils.logInfo("Test is started");
+
+        getPage().navigate(BASE_URL);
+
+        if(isOnHomePage()) {
+            LoggerUtils.logInfo("Base url is opened and content is not empty.");
+        }else {
+            LoggerUtils.logError("ERROR: Base url is NOT opened OR content is EMPTY.");
+        }
     }
 
     @AfterMethod
@@ -63,6 +74,17 @@ abstract class BaseTest {
             playwright.close();
             LoggerUtils.logInfo("Playwright closed");
         }
+    }
+
+    private boolean isOnHomePage() {
+        getPage().waitForLoadState();
+
+        return getPage().url().equals(BASE_URL) && !page.content().isEmpty();
+    }
+
+    protected boolean getIsOnHomePage() {
+
+        return isOnHomePage();
     }
 
     Page getPage() {
