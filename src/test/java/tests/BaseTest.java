@@ -6,13 +6,14 @@ import org.testng.annotations.AfterSuite;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.BeforeSuite;
 import utils.LoggerUtils;
+import utils.runner.BrowserManager;
 
 import static utils.TestData.BASE_URL;
+import static utils.TestData.HOME_END_POINT;
 
 public abstract class BaseTest {
     private final Playwright playwright = Playwright.create();
-    private final Browser browser = playwright.chromium().launch(new BrowserType.LaunchOptions()
-            .setHeadless(false).setSlowMo(1000));
+    private final Browser browser = BrowserManager.createBrowser(playwright,"chromium", false, 1000);
     private BrowserContext context;
     private Page page;
 
@@ -42,7 +43,7 @@ public abstract class BaseTest {
         LoggerUtils.logInfo("Page created");
         LoggerUtils.logInfo("Test is started");
 
-        getPage().navigate(BASE_URL);
+        getPage().navigate(BASE_URL + HOME_END_POINT);
 
         if(isOnHomePage()) {
             LoggerUtils.logInfo("Base url is opened and content is not empty.");
