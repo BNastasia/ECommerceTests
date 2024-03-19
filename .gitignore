@@ -18,6 +18,8 @@ logs/
 *.iml
 *.ipr
 
+config.properties
+
 ### Eclipse ###
 .apt_generated
 .classpath

@@ -5,8 +5,14 @@ import com.microsoft.playwright.BrowserType;
 import com.microsoft.playwright.Playwright;
 import utils.LoggerUtils;
 
+import java.util.Map;
+
 public final class BrowserManager {
-    public  static Browser createBrowser(Playwright playwright, String browserName, boolean isHeadless, int slowMo) {
+    public  static Browser createBrowser(Playwright playwright, Map<String, String> env) {
+        String browserName = env.get("browser");
+        boolean isHeadless = Boolean.parseBoolean(env.get("isHeadless"));
+        int slowMo = Integer.parseInt(env.get("slowMo"));
+
         switch (browserName) {
             case "chromium" -> {
                 return playwright.chromium().launch(new BrowserType.LaunchOptions()
